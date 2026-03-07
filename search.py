@@ -9,7 +9,7 @@ import pandas as pd
 
 query = "energy" # Change search queryfor testing (TODO: Kristen will add frontend/cli interaction)
 
-df = pd.read_csv("songs.csv")
+df = pd.read_csv("songs.zip")
 base = os.path.abspath("var_song_five_stem/index") 
 bm25 = pt.terrier.Retriever(base, wmodel="BM25")
 results = bm25.search(query)
