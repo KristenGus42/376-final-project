@@ -12,7 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 import pandas as pd
 
 
-df_path = "mpd_data/mpd.slice.1000-1999.json"
+df_path = "mpd_data/mpd.slice.0-999.json"
 random_seed = 7
 
 
@@ -291,13 +291,33 @@ class Combine:
         self.build_user_item_matrix()
         self.train_item_item_cf(k_neighbors=k_neighbors)
 
+def evaluate(rec, k=10):
+    hits, total = 0, 0
+
+    for user in rec.users:
+        tracks = user.history_track_uris
+        if len(tracks) < 5:
+            continue
+
+        held_out = set(tracks[-2:])
+        user.history_track_uris = tracks[:-2]  # temporarily hide last 2
+
+        recs = {r["track_uri"] for r in rec.recommend_for_user(user.user_id, k=k)}
+        hits += len(recs & held_out)
+        total += len(held_out)
+
+        user.history_track_uris = tracks  # restore
+
+    print(f"Precision: {hits / (total / 2 * k):.4f}")
+    print(f"Recall: {hits / total:.4f}")
+
 if __name__ == "__main__":
     import os
     os.environ["JAVA_HOME"] = r"C:\Program Files\Java\jdk-25.0.2"
     import pyterrier as pt
 
     # Load search index once
-    songs_df = pd.read_csv("songs_expanded.zip")
+    songs_df = pd.read_csv("songs_expanded.csv")
     base = os.path.abspath("var_song_five_expanded/index")
     bm25 = pt.terrier.Retriever(base, wmodel="BM25")
 
@@ -311,13 +331,15 @@ if __name__ == "__main__":
 
         # Search
         results = bm25.search(query)
-        search_df = songs_df.iloc[results.head(300).docid]
+        search_df = songs_df.iloc[results.head(200).docid]
         print(f"\n--- Search Results for '{query}' ---")
         #print(search_df[["song", "followers"]].to_string())
 
         # Build recommender fresh each query using search results as seed
         rec = Combine(df_path)
         rec.build(search_df=search_df, n_users=30, k_neighbors=50)
+        evaluate(rec, k=10)
+
 
         # Build User
         UID = 13 # Change user id
