@@ -12,7 +12,10 @@ from sklearn.neighbors import NearestNeighbors
 import pandas as pd
 
 
-df_path = "mpd_data/mpd.slice.0-999.json"
+
+#df_path = "mpd_data/mpd.slice.0-999.json"
+df_path = "mpd_data/"
+
 random_seed = 7
 
 
@@ -82,9 +85,13 @@ class Combine:
     def load_mpd(self, search_df: pd.DataFrame = None) -> None:
         import ast
 
-        with open(self.mpd_json_path, "r") as f:
-            mpd = json.load(f)
-        playlists = mpd.get("playlists", [])
+        playlists = []
+        for filename in os.listdir(self.mpd_json_path):
+            if filename.endswith(".json"):
+                filepath = os.path.join(self.mpd_json_path, filename)
+                with open(filepath, "r") as f:
+                    mpd = json.load(f)
+                playlists.extend(mpd.get("playlists", []))
 
         if search_df is not None:
             seed_uris = set()
@@ -317,8 +324,8 @@ if __name__ == "__main__":
     import pyterrier as pt
 
     # Load search index once
-    songs_df = pd.read_csv("songs_expanded.csv")
-    base = os.path.abspath("var_song_five_expanded/index")
+    songs_df = pd.read_csv("songs_expanded2.csv")
+    base = os.path.abspath("var_song_five_expanded2/index")
     bm25 = pt.terrier.Retriever(base, wmodel="BM25")
 
     while True:
@@ -331,7 +338,7 @@ if __name__ == "__main__":
 
         # Search
         results = bm25.search(query)
-        search_df = songs_df.iloc[results.head(200).docid]
+        search_df = songs_df.iloc[results.head(50).docid]
         print(f"\n--- Search Results for '{query}' ---")
         #print(search_df[["song", "followers"]].to_string())
 
@@ -342,7 +349,9 @@ if __name__ == "__main__":
 
 
         # Build User
-        UID = 13 # Change user id
+        #UID = 13 # Change user id
+        uid_rand = random.Random()
+        UID = uid_rand.randint(1, 29) # For demo purposes 
         demo_user = rec.users[UID]
 
         print(f"\nDemo user: {demo_user.user_id}")
