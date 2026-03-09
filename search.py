@@ -9,17 +9,22 @@ import pandas as pd
 
 query = "energy" # Change search queryfor testing (TODO: Kristen will add frontend/cli interaction)
 
-df = pd.read_csv("songs.zip")
-base = os.path.abspath("var_song_five_stem/index") 
+df = pd.read_csv("songs_expanded.csv")
+base = os.path.abspath("var_song_five_expanded/index") 
 bm25 = pt.terrier.Retriever(base, wmodel="BM25")
-results = bm25.search(query)
-results.sort_values
 
-# CHOOSE TO PRINT A "RANKED" VERSION BY FOLLOWER COUNT OR JUST DO RELEVANCE
+def search_songs(query: str, top_k: int = 30) -> pd.DataFrame:
+    results = bm25.search(query)
+    return df.iloc[results.head(10).docid].song
 
-# Ranked with follower Account 
-#sorted_df = df.sort_values(by='followers', ascending=True)
-#print(sorted_df.iloc[results.head(30).docid].song)
+search_songs(query)
 
-# Purely by relevance score
-print(df.iloc[results.head(30).docid].song)
+while True:
+    query = input("\nEnter search query (or 'q' to quit): ").strip()
+    if query.lower() == "q":
+        print("Goodbye!")
+        break
+    if not query:
+        continue
+    print("\n Personalized results: ")
+    print(search_songs(query))
