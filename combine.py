@@ -324,7 +324,7 @@ if __name__ == "__main__":
     import pyterrier as pt
 
     # Load search index once
-    songs_df = pd.read_csv("songs_expanded2.csv")
+    songs_df = pd.read_csv("songs_expanded2.zip")
     base = os.path.abspath("var_song_five_expanded2/index")
     bm25 = pt.terrier.Retriever(base, wmodel="BM25")
 

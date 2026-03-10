@@ -1,16 +1,32 @@
-# 376-final-project: Special Recs
-AI Contribution Statement: Generative AI was used for this project. Team members used Gen AI to help with documentation and formatting as well as understanding code from homework. Gen AI was used to make code more concise and understand syntax issues.
+# Music Recommender System: Special Recs
 
-Contributors: Kristen Gustafson, Joshua Taylor, Gisselle Colin, Ekram Milash 
+## Usage
+To use the CLI tool for searching, run the `combine.py` script.
 
-final_build_index.ipynb: This file created the search index and preprocessed data for the 
+---
 
-recommender.py: This was the original recommender script.
+## Contributors
+Kristen Gustafson, Joshua Taylor, Gisselle Colin, Ekram Milash
 
-combine.py: This is a combination of the recommender script and the search script. This script has the main user interaction loop 
+---
 
-search.py: This was the script that evaluated the search system's precision and recall. 
+## AI Contribution Statement
+Generative AI was used for this project. Team members used Gen AI to help with documentation and formatting as well as understanding code from homework. Gen AI was also used to make code more concise and to understand syntax issues.
 
-/mpd_data: PLaylist and song data
+---
 
-/mood_data: Emotion data
+## File Overview
+
+| File | Description |
+|------|-------------|
+| `combine.py` | Main script with the user interaction loop — combines search and recommendation |
+| `search.py` | Evaluates the search system's precision and recall |
+| `recommender.py` | Original recommender script |
+| `final_build_index.ipynb` | Creates the search index and preprocesses data |
+
+## Data Directories
+
+| Directory | Contents |
+|-----------|----------|
+| `/mpd_data` | Playlist and song data |
+| `/mood_data` | Emotion data |
