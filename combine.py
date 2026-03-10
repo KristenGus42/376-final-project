@@ -339,19 +339,18 @@ if __name__ == "__main__":
         # Search
         results = bm25.search(query)
         search_df = songs_df.iloc[results.head(50).docid]
+        print(songs_df.iloc[results.head(50)])
         print(f"\n--- Search Results for '{query}' ---")
-        #print(search_df[["song", "followers"]].to_string())
 
         # Build recommender fresh each query using search results as seed
         rec = Combine(df_path)
         rec.build(search_df=search_df, n_users=30, k_neighbors=50)
         evaluate(rec, k=10)
 
-
         # Build User
-        #UID = 13 # Change user id
-        uid_rand = random.Random()
-        UID = uid_rand.randint(1, 29) # For demo purposes 
+        UID = 21 # Change user id
+        #uid_rand = random.Random()
+        #UID = uid_rand.randint(1, 29) # For demo purposes 
         demo_user = rec.users[UID]
 
         print(f"\nDemo user: {demo_user.user_id}")
